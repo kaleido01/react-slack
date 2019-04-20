@@ -11,7 +11,6 @@ class UserPanel extends React.Component {
 			key: "user",
 			text: (
 				<span>
-					{console.log(this.state)}
 					Signed in as <strong>{this.state.user.displayName}</strong>
 				</span>
 			),
