@@ -1,5 +1,5 @@
 import React from "react";
-import firebase from "../firebase";
+import firebase from "../../firebase";
 import {
 	Grid,
 	Form,
@@ -56,7 +56,7 @@ class Login extends React.Component {
 	};
 
 	render() {
-		const { username, email, password, errors, loading } = this.state;
+		const { email, password, errors, loading } = this.state;
 		return (
 			<Grid textAlign="center" verticalAlign="middle" className="app">
 				<Grid.Column style={{ maxWidth: 450 }}>
