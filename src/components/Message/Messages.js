@@ -9,16 +9,19 @@ import Message from "./Message";
 
 class Messages extends React.Component {
 	state = {
+		privateMessagesRef: firebase.database().ref("privateMessages"),
 		messagesRef: firebase.database().ref("messages"),
 		channel: this.props.currentChannel,
 		user: this.props.currentUser,
 		messagesLoading: true,
 		messages: [],
+		isChannelStarred: false,
 		progressBar: false,
 		numUniqueUsers: "",
 		searchTerm: "",
 		searchLoading: false,
-		searchResults: []
+		searchResults: [],
+		privateChannel: this.props.privateChannel
 	};
 
 	componentDidMount() {
@@ -34,7 +37,8 @@ class Messages extends React.Component {
 
 	addMessageListener = channelId => {
 		let loadedMessages = [];
-		this.state.messagesRef.child(channelId).on("child_added", snap => {
+		const ref = this.getMessagesRef();
+		ref.child(channelId).on("child_added", snap => {
 			loadedMessages.push(snap.val());
 			this.setState({
 				messages: loadedMessages,
@@ -42,6 +46,11 @@ class Messages extends React.Component {
 			});
 			this.countUniqueUsers(loadedMessages);
 		});
+	};
+
+	getMessagesRef = () => {
+		const { messagesRef, privateMessagesRef, privateChannel } = this.state;
+		return privateChannel ? privateMessagesRef : messagesRef;
 	};
 
 	countUniqueUsers = messages => {
@@ -56,6 +65,22 @@ class Messages extends React.Component {
 		this.setState({ numUniqueUsers });
 	};
 
+	handleStar = () => {
+		this.setState(
+			prevState => ({
+				isChannelStarred: !prevState.isChannelStarred
+			}),
+			this.starChannel()
+		);
+	};
+
+	starChannel = () => {
+		if (this.state.isChannelStarred) {
+			console.log("starred");
+		} else {
+			console.log("unstared");
+		}
+	};
 	displayMessages = messages => {
 		return (
 			messages.length > 0 &&
@@ -101,7 +126,11 @@ class Messages extends React.Component {
 		setTimeout(() => this.setState({ searchLoading: false }), 3000);
 	};
 
-	displayChannelName = channel => (channel ? `#${channel.name}` : "");
+	displayChannelName = channel => {
+		return channel
+			? `${this.state.privateChannel ? "@" : "#"}${channel.name}`
+			: "";
+	};
 
 	render() {
 		const {
@@ -113,7 +142,9 @@ class Messages extends React.Component {
 			numUniqueUsers,
 			searchTerm,
 			searchResults,
-			searchLoading
+			searchLoading,
+			privateChannel,
+			isChannelStarred
 		} = this.state;
 
 		return (
@@ -123,6 +154,9 @@ class Messages extends React.Component {
 					numUniqueUsers={numUniqueUsers}
 					handleSearchChange={this.handleSearchChange}
 					searchLoading={searchLoading}
+					isPrivateChannel={privateChannel}
+					isChannelStarred={isChannelStarred}
+					handleStar={this.handleStar}
 				/>
 				<Segment>
 					<Comment.Group
@@ -137,6 +171,8 @@ class Messages extends React.Component {
 					currentChannel={channel}
 					currentUser={user}
 					isProgressBarVisible={this.isProgressBarVisible}
+					isPrivateChannel={privateChannel}
+					getMessagesRef={this.getMessagesRef}
 				/>
 			</React.Fragment>
 		);

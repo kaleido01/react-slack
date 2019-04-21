@@ -32,8 +32,9 @@ class Root extends React.Component {
 				this.props.setUser(user);
 				this.props.history.push("/");
 			} else {
-				this.props.clearUser();
+				//先にcrearuserを行うとisLoadingがfalseにされてレンダリングされてしまう。したがってその前にリダイレクトさせる必要がある。
 				this.props.history.push("/login");
+				this.props.clearUser();
 			}
 		});
 	}
