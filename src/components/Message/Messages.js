@@ -1,11 +1,13 @@
 import React from "react";
 import { Segment, Comment } from "semantic-ui-react";
+import { connect } from "react-redux";
 
 import firebase from "../../firebase";
 
 import MessagesHeader from "./MessagesHeader";
 import MessageForm from "./MessageForm";
 import Message from "./Message";
+import { setUserPosts } from "../../actions/index";
 
 class Messages extends React.Component {
 	state = {
@@ -16,6 +18,7 @@ class Messages extends React.Component {
 		messagesLoading: true,
 		messages: [],
 		isChannelStarred: false,
+		usersRef: firebase.database().ref("users"),
 		progressBar: false,
 		numUniqueUsers: "",
 		searchTerm: "",
@@ -28,6 +31,7 @@ class Messages extends React.Component {
 		const { channel, user } = this.state;
 		if (user && channel) {
 			this.addListners(channel.id);
+			this.adduserStarsListener(channel.id, user.uid);
 		}
 	}
 
@@ -45,7 +49,27 @@ class Messages extends React.Component {
 				messagesLoading: false
 			});
 			this.countUniqueUsers(loadedMessages);
+			this.countUserPosts(loadedMessages);
 		});
+	};
+
+	adduserStarsListener = (channelId, userId) => {
+		//onceはデータの1回読み取り
+		this.state.usersRef
+			.child(userId)
+			.child("starred")
+			.once("value")
+			.then(data => {
+				if (data.val() !== null) {
+					console.log(data.val());
+					//全てのチャンネルデータはオブジェクト型それのキーを取り出している
+					const channelIds = Object.keys(data.val());
+					console.log(channelIds);
+
+					const prevStarred = channelIds.includes(channelId);
+					this.setState({ isChannelStarred: prevStarred });
+				}
+			});
 	};
 
 	getMessagesRef = () => {
@@ -70,15 +94,46 @@ class Messages extends React.Component {
 			prevState => ({
 				isChannelStarred: !prevState.isChannelStarred
 			}),
-			this.starChannel()
+			() => this.starChannel()
 		);
+	};
+
+	countUserPosts = messages => {
+		let userPosts = messages.reduce((acc, message) => {
+			if (message.user.name in acc) {
+				acc[message.user.name].count += 1;
+			} else {
+				acc[message.user.name] = {
+					avatar: message.user.avatar,
+					count: 1
+				};
+			}
+			return acc;
+		}, {});
+		this.props.setUserPosts(userPosts);
 	};
 
 	starChannel = () => {
 		if (this.state.isChannelStarred) {
-			console.log("starred");
+			this.state.usersRef.child(`${this.state.user.uid}/starred`).update({
+				[this.state.channel.id]: {
+					name: this.state.channel.name,
+					details: this.state.channel.details,
+					createdBy: {
+						name: this.state.channel.createdBy.name,
+						avatar: this.state.channel.createdBy.avatar
+					}
+				}
+			});
 		} else {
-			console.log("unstared");
+			this.state.usersRef
+				.child(`${this.state.user.uid}/starred`)
+				.child(this.state.channel.id)
+				.remove(err => {
+					if (err !== null) {
+						console.error(err);
+					}
+				});
 		}
 	};
 	displayMessages = messages => {
@@ -179,4 +234,7 @@ class Messages extends React.Component {
 	}
 }
 
-export default Messages;
+export default connect(
+	null,
+	{ setUserPosts }
+)(Messages);
