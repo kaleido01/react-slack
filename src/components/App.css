@@ -171,7 +171,7 @@ body,
 	right: 0;
 	background-color: rgba(58, 57, 57, 0.3);
 }
-.skeleton__author {
+.skeleton__details {
 	height: 20px;
 	border-radius: 3px;
 	position: absolute;
@@ -179,4 +179,10 @@ body,
 	left: 40px;
 	right: 20px;
 	background-color: rgba(58, 57, 57, 0.3);
+}
+
+.toast {
+	position: absolute;
+	bottom: 0;
+	right: 0;
 }

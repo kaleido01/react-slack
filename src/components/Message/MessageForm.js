@@ -1,12 +1,14 @@
 import React from "react";
 import uuidv4 from "uuid/v4";
 import { Segment, Input, Button } from "semantic-ui-react";
+import { SemanticToastContainer, toast } from "react-semantic-toasts";
 import firebase from "./../../firebase";
 
 import FileModal from "./FileModal";
 import ProgressBar from "./ProgressBar";
 import { Picker, emojiIndex } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
+
 class MessageForm extends React.Component {
 	state = {
 		storageRef: firebase.storage().ref(),
@@ -20,7 +22,8 @@ class MessageForm extends React.Component {
 		user: this.props.currentUser,
 		errors: [],
 		modal: false,
-		emojiPicker: false
+		emojiPicker: false,
+		openToast: false
 	};
 
 	componentWillUnmount() {
@@ -192,6 +195,20 @@ class MessageForm extends React.Component {
 		);
 	};
 
+	openToast = () => {
+		this.setState({ openToast: false });
+		return setTimeout(() => {
+			toast({
+				type: "info",
+				icon: "check",
+				title: "File Uploaded",
+				description: "your request success",
+				animation: "fadeIn",
+				time: 3000
+			});
+		}, 0);
+	};
+
 	sendFileMessage = (fileUrl, ref, pathToUpload) => {
 		ref
 			.child(pathToUpload)
@@ -269,12 +286,23 @@ class MessageForm extends React.Component {
 						icon="cloud upload"
 						onClick={this.openModal}
 					/>
+					{/* <Button
+						color="teal"
+						disabled={uploadState === "uploading"}
+						content="UploadMedia"
+						labelPosition="right"
+						icon="cloud upload"
+						onClick={this.openToast}
+					/> */}
 				</Button.Group>
 				<FileModal
 					modal={modal}
 					closeModal={this.closeModal}
 					uploadFile={this.uploadFile}
 				/>
+
+				<SemanticToastContainer className="toast" />
+
 				<ProgressBar
 					uploadState={uploadState}
 					percentUploaded={percentUploaded}
