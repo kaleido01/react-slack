@@ -7,6 +7,7 @@ import ColorPanel from "./ColorPanel/ColorPanel";
 import SidePanel from "./SidePanel/SidePanel";
 import MetaPanel from "./Metapanel/MetaPanel";
 import Messages from "./Message/Messages";
+import Navbar from "./../Navbar/Navbar";
 
 const App = ({
 	currentUser,
@@ -17,36 +18,40 @@ const App = ({
 	secondaryColor
 }) => {
 	return (
-		<Grid
-			columns="equal"
-			className="app"
-			style={{ background: secondaryColor }}>
-			<ColorPanel
-				currentUser={currentUser}
-				key={currentUser && currentUser.name}
-			/>
-			<SidePanel
-				currentUser={currentUser}
-				key={currentUser && currentUser.uid}
-				primaryColor={primaryColor}
-			/>
-			<Grid.Column style={{ marginLeft: 320 }}>
-				<Messages
-					currentChannel={currentChannel}
-					key={currentChannel && currentChannel.id}
+		<React.Fragment>
+			<Navbar />
+
+			<Grid
+				columns="equal"
+				className="app"
+				style={{ background: secondaryColor }}>
+				<ColorPanel
 					currentUser={currentUser}
-					isPrivateChannel={isPrivateChannel}
+					key={currentUser && currentUser.name}
 				/>
-			</Grid.Column>
-			<Grid.Column width={4}>
-				<MetaPanel
-					key={currentChannel && currentChannel.name}
-					isPrivateChannel={isPrivateChannel}
-					currentChannel={currentChannel}
-					userPosts={userPosts}
+				<SidePanel
+					currentUser={currentUser}
+					key={currentUser && currentUser.uid}
+					primaryColor={primaryColor}
 				/>
-			</Grid.Column>
-		</Grid>
+				<Grid.Column style={{ marginLeft: 320 }}>
+					<Messages
+						currentChannel={currentChannel}
+						key={currentChannel && currentChannel.id}
+						currentUser={currentUser}
+						isPrivateChannel={isPrivateChannel}
+					/>
+				</Grid.Column>
+				<Grid.Column width={4}>
+					<MetaPanel
+						key={currentChannel && currentChannel.name}
+						isPrivateChannel={isPrivateChannel}
+						currentChannel={currentChannel}
+						userPosts={userPosts}
+					/>
+				</Grid.Column>
+			</Grid>
+		</React.Fragment>
 	);
 };
 

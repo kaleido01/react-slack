@@ -48,7 +48,7 @@ body,
 	overflow: hidden;
 	width: 35px;
 	border-radius: 3px;
-	cursor: pointer;
+	cursor: pointer !important;
 }
 
 .color__square {
@@ -185,4 +185,24 @@ body,
 	position: absolute;
 	bottom: 0;
 	right: 0;
+}
+
+/* タブレット以下でのcss */
+@media (max-width: 768px) {
+	.mobile__nav {
+		height: 5vh;
+	}
+	html,
+	body,
+	.app {
+		height: 95vh;
+		background: #eee;
+		padding: 1em;
+	}
+}
+/* デスクトップ版でのcss */
+@media (min-width: 768px) {
+	.mobile__nav {
+		display: none !important;
+	}
 }
