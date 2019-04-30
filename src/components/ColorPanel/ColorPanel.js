@@ -21,7 +21,8 @@ class ColorPanel extends React.Component {
 		primary: "",
 		secondary: "",
 		usersRef: firebase.database().ref("users"),
-		userColors: []
+		userColors: [],
+		visible: true
 	};
 
 	componentDidMount() {
@@ -98,7 +99,7 @@ class ColorPanel extends React.Component {
 		));
 
 	render() {
-		const { modal, userColors } = this.state;
+		const { modal, userColors, visible } = this.state;
 
 		return (
 			<Sidebar
@@ -106,8 +107,9 @@ class ColorPanel extends React.Component {
 				icon="labeled"
 				inverted
 				vertical
-				visible
-				width="very thin">
+				visible={visible}
+				width="very thin"
+				className="color-panel">
 				<Divider />
 				<Button icon="add" size="small" color="blue" onClick={this.openModal} />
 				{this.displayUserColors(userColors)}

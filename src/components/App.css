@@ -192,12 +192,14 @@ body,
 	.mobile__nav {
 		height: 5vh;
 	}
-	html,
-	body,
 	.app {
 		height: 95vh;
 		background: #eee;
 		padding: 1em;
+	}
+
+	.color-panel {
+		display: none !important;
 	}
 }
 /* デスクトップ版でのcss */
