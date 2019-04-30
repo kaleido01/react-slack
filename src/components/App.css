@@ -201,6 +201,9 @@ body,
 	.color-panel {
 		display: none !important;
 	}
+	.meta-panel {
+		display: none !important;
+	}
 }
 /* デスクトップ版でのcss */
 @media (min-width: 768px) {

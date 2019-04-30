@@ -5,7 +5,7 @@ class Navbar extends Component {
 	render() {
 		return (
 			<Menu className="mobile__nav" fixed="top">
-				<Menu.Item>aaaaaaa</Menu.Item>
+				<Menu.Item content="aaa" />
 			</Menu>
 		);
 	}
